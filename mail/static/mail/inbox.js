@@ -18,9 +18,10 @@ function compose_email(email) {
   document.querySelector('#compose-view').style.display = 'block';
 
   // Clear out composition fields
-  document.querySelector('#compose-recipients').value = email ? email.sender : '';
-  document.querySelector('#compose-subject').value = email ? email.subject : '';
-  document.querySelector('#compose-body').value = email ? email.body : '';
+  document.querySelector('#compose-recipients').value = email.sender ? email.sender : '';
+  document.querySelector('#compose-subject').value = email.subject ? email.subject : '';
+  document.querySelector('#compose-body').value = email.body ? email.body : '';
+
 
   document.querySelector('#submit-compose').addEventListener('click', send_email)
 }
@@ -50,9 +51,6 @@ function load_mailbox(mailbox) {
         email_container.appendChild(sender);
         email_container.appendChild(subject);
         email_container.appendChild(date);
-        //Error en reply btn - parece que no va aqui
-        const reply_btn = document.getElementById("email_reply_btn");
-        reply_btn.onclick = () => { compose_reply(email) }
         if (mailbox !== 'sent') email_container.appendChild(set_archived_view(mailbox, email.id));
         email_container.addEventListener('click', function () {
           view_email(email.id)
@@ -78,6 +76,8 @@ function view_email(email_id) {
         const container = document.getElementById('email-content-view');
         container.replaceChildren(error_message);
       } else {
+        const reply_btn = document.getElementById("email_reply_btn");
+        reply_btn.onclick = () => { compose_reply(email) }
         document.querySelector('#email_sender').innerHTML = email.sender
         document.querySelector('#email_recipients').innerHTML = email.recipients
         document.querySelector('#email_subject').innerHTML = email.subject
@@ -156,7 +156,12 @@ function update_archive_state(mailbox, email_id) {
 }
 
 function compose_reply(email) {
-  if (!email.subject.startsWith('Re:')) email.subject = 'Re: '.concat(email.subject);
-  email.body = `On ${email.timestamp} ${email.sender} wrote:\n${email.body}\n=========\n`
-  compose_email(email)
+  const response_sender = document.querySelector('#email_sender_input').value
+  if (!email.subject.startsWith('Re:')) {
+    email.subject = 'Re: '.concat(email.subject);
+    email.body = `On ${email.timestamp} ${email.sender} wrote:\n${email.body.replace('/\n/g', '\t\n')}\n=========\nResponse from ${response_sender}:\n`;
+  } else {
+    email.body = `${email.body}\n=========\nResponse from ${response_sender}:\n`;
+  }
+  compose_email(email);
 }

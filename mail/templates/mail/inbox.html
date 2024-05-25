@@ -33,14 +33,14 @@
     </div>
     <button id="email_reply_btn" type="button" class="btn btn-sm btn-outline-primary">Reply</button>
     <hr>
-    <p id="email_body"></p>
+    <p id="email_body" style="white-space: pre-line"></p>
 </div>
 
 <div id="compose-view">
     <h3>New Email</h3>
     <form id="compose-form">
         <div class="form-group">
-            From: <input disabled class="form-control" value="{{ request.user.email }}">
+            From: <input id="email_sender_input" disabled class="form-control" value="{{ request.user.email }}">
         </div>
         <div class="form-group">
             To: <input id="compose-recipients" class="form-control" required>
@@ -50,6 +50,7 @@
             <input class="form-control" id="compose-subject" placeholder="Subject" required>
         </div>
         <textarea class="form-control" id="compose-body" placeholder="Body"></textarea>
+        <br>
         <input id="submit-compose" type="submit" class="btn btn-primary"/>
     </form>
 </div>
